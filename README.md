@@ -29,4 +29,6 @@ JAVA_HOME=<jdk 21> ./gradlew assembleDebug
 
 ## License
 
-Apache-2.0, as upstream. Substantial portions (c) the Macro Deck authors.
+MIT for the app code, as upstream (c) Manuel Mayer and the Macro Deck Client
+contributors. The vendored widget runtime under `src/runtime` is from Macro
+Deck 3 and stays Apache-2.0; see that repository for its notices.
