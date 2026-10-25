@@ -1,0 +1,81 @@
+name: reusable-android-build.yml
+on:
+  workflow_call:
+    inputs:
+      version:
+        required: true
+        type: string
+      base-build-artifact-name:
+        required: true
+        type: string
+    outputs:
+      artifact_name:
+        description: "Name of the uploaded artifact"
+        value: ${{ jobs.ios-build.outputs.artifact_name }}
+
+env:
+  KEYSTORE_PATH: "${{ github.workspace }}/keystore.jks"
+  FIREBASE_CREDENTIALS_PATH: "${{ github.workspace }}/firebase.json"
+
+jobs:
+  ios-build:
+    name: Build Android project
+    runs-on: macos-26
+    outputs:
+      artifact_name: ${{ steps.meta.outputs.artifact_name }}
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+      - name: Download www base build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ inputs.base-build-artifact-name }}-www
+          path: www/
+      - name: Download node base build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ inputs.base-build-artifact-name }}-node
+          path: node_modules/
+      - name: Download android base build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ inputs.base-build-artifact-name }}-android
+          path: android/
+      - name: "Save signing keystore"
+        run: base64 -d <<< "${{secrets.ANDROID_KEYSTORE_BASE64}}" > $KEYSTORE_PATH
+      - name: Set Up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: |
+            17
+            21
+          cache: 'gradle'
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+      - name: "Build project"
+        env:
+          VERSION_NUMBER: ${{ inputs.version }}
+          KEYSTORE_FILE_PATH: ${{env.KEYSTORE_PATH}}
+          KEYSTORE_FILE_PASSWORD: ${{secrets.ANDROID_KEYSTORE_PASSWORD}}
+          KEYSTORE_FILE_ALIAS: ${{secrets.ANDROID_KEYSTORE_KEY}}
+        run: |
+          export BUILD_NUMBER=$(( ${{ github.run_number }} + 3000 ))
+          cd android
+          bundle install
+          fastlane build
+      - name: Generate artifact name
+        id: meta
+        run: |
+          ARTIFACT_NAME="android-build-${{ inputs.version }}-${GITHUB_RUN_ID}"
+          echo "artifact_name=$ARTIFACT_NAME" >> $GITHUB_OUTPUT
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.meta.outputs.artifact_name }}
+          path: |
+            android/app/build/outputs/apk/release/app-release.apk
+            android/app/build/outputs/bundle/release/app-release.aab
+          if-no-files-found: error
+          retention-days: 1

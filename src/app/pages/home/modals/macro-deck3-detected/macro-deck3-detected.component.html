@@ -1,0 +1,19 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>qtitpcdeck host detected</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="dismiss()" [strong]="true">Close</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+<ion-content class="ion-padding">
+  <h2>qtitpcdeck host detected</h2>
+  <p>The host at this address speaks the qtitpcdeck deck protocol. Connect to it to use this app as a deck.</p>
+
+  @if (connection) {
+    <ion-button class="mt-3" expand="block" (click)="connect()">Connect to {{ hostName }}</ion-button>
+  } @else {
+    <p>Add this host as a connection first, then connect to it from the connection list.</p>
+  }
+
+</ion-content>

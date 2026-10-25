@@ -1,0 +1,56 @@
+import type { LocalizedText } from '../localization/localized-text';
+
+export type VariableScope = 'global' | 'widget' | 'script' | 'automation';
+
+export type VariableType = 'text' | 'numeric' | 'boolean' | 'color';
+
+export type VariableClassification = 'user' | 'integration' | 'widget';
+
+export interface VariableFileSource {
+  path: string;
+  allowWriteBack: boolean;
+}
+
+export interface VariableTemplateSource {
+  template: string;
+}
+
+export interface VariableTemplateError {
+  code: 'RenderFailed' | 'NotNumeric' | 'NotBoolean' | 'NotColor' | 'CircularReference' | string;
+  detail?: string | null;
+}
+
+export interface Variable {
+  id: string;
+  name: string;
+  scope: VariableScope;
+  scopeRefId?: string;
+  type: VariableType;
+  classification: VariableClassification;
+  ownerIntegrationId?: string;
+  value: string;
+  decimalPlaces?: number;
+  available?: boolean;
+  origin?: 'event' | 'input';
+  displayName?: LocalizedText;
+  configurationKey?: string | null;
+  configurationName?: LocalizedText;
+  dynamicResourceId?: string;
+  unit?: string;
+  semanticKind?: string;
+  min?: number;
+  max?: number;
+  step?: number;
+  attributes?: Record<string, string>;
+  canWrite?: boolean;
+  commitOnRelease?: boolean;
+  shared?: boolean;
+  isShareable?: boolean;
+  fileSource?: VariableFileSource | null;
+  templateSource?: VariableTemplateSource | null;
+  templateError?: VariableTemplateError | null;
+}
+
+export type { VariableReference } from './action-builder.interface';
+export { isVariableReference } from './action-builder.interface';
+

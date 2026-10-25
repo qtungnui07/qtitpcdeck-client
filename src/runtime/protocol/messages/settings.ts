@@ -1,0 +1,502 @@
+import { LocalizedText } from '../../localization/localized-text';
+import { LogEntryLevel } from './logs';
+
+export type ThemeMode = 'light' | 'dark' | 'system';
+
+export interface GetAppearanceSettingsResponse {
+  themeMode: ThemeMode;
+  accentColor: string;
+  accentColorSource?: string;
+  fontFamily?: string;
+}
+
+export interface UpdateAppearanceSettingsRequest {
+  themeMode: ThemeMode;
+  accentColor: string;
+  accentColorSource?: string;
+  fontFamily?: string;
+}
+
+export interface UpdateAppearanceSettingsResponse {
+  themeMode: ThemeMode;
+  accentColor: string;
+  accentColorSource?: string;
+  fontFamily?: string;
+}
+
+export interface AppearanceChangedEvent {
+  themeMode: ThemeMode;
+  accentColor: string;
+  accentColorSource?: string;
+  fontFamily?: string;
+}
+
+export interface ColorPaletteChangedEvent {
+  colors: string[];
+}
+
+export interface GetLoggingSettingsResponse {
+  minimumLevel: LogEntryLevel;
+  defaultMinimumLevel: LogEntryLevel;
+}
+
+export interface UpdateLoggingSettingsRequest {
+  minimumLevel: LogEntryLevel;
+}
+
+export interface UpdateLoggingSettingsResponse {
+  minimumLevel: LogEntryLevel;
+  defaultMinimumLevel: LogEntryLevel;
+}
+
+export interface GetHttpSettingsResponse {
+  customUserAgent?: string | null;
+  effectiveUserAgent: string;
+  defaultUserAgent: string;
+}
+
+export interface UpdateHttpSettingsRequest {
+  userAgent?: string | null;
+}
+
+export interface UpdateHttpSettingsResponse {
+  success: boolean;
+  error?: { code: string; message?: LocalizedText };
+  customUserAgent?: string | null;
+  effectiveUserAgent: string;
+  defaultUserAgent: string;
+}
+
+export interface GetAutostartSettingsResponse {
+  supported: boolean;
+  enabled: boolean;
+  openMinimized: boolean;
+}
+
+export interface UpdateAutostartSettingsRequest {
+  enabled: boolean;
+  openMinimized: boolean;
+}
+
+export interface UpdateAutostartSettingsResponse {
+  success: boolean;
+  error: string | null;
+  supported: boolean;
+  enabled: boolean;
+  openMinimized: boolean;
+}
+
+export type TlsMode = 'Replace' | 'Additional';
+export type ActiveTlsMode = 'Disabled' | TlsMode;
+export type TlsCertificateSource = 'SelfSigned' | 'Custom' | 'LocalCa';
+
+export interface GetNetworkSettingsResponse {
+  publicPort: number;
+  defaultPublicPort: number;
+  activePublicPort: number;
+  overriddenByEnvironment: boolean;
+  configuredPortIgnored: boolean;
+  publicListenerUnavailable: boolean;
+  restartRequired: boolean;
+  restartSupported: boolean;
+  restartUnsupportedReason: string | null;
+  minimumPublicPort: number;
+  maximumPublicPort: number;
+
+  tlsEnabled: boolean;
+  tlsMode: TlsMode;
+  tlsHttpsPort: number;
+  defaultTlsHttpsPort: number;
+
+  activeTlsEnabled: boolean;
+  activeTlsMode: ActiveTlsMode;
+  activeTlsHttpsPort: number | null;
+
+  tlsFailure: string;
+  tlsRejection: string;
+
+  tlsCertificateConfigured: boolean;
+  tlsCertificateSource: TlsCertificateSource | null;
+  tlsCertificateSubject: string | null;
+  tlsCertificateFingerprint: string | null;
+  tlsCertificateNotBefore: string | null;
+  tlsCertificateNotAfter: string | null;
+  tlsCertificateExpired: boolean;
+  tlsCertificateNotYetValid: boolean;
+
+  tlsCertificateIssuedByAuthority: boolean;
+  tlsAuthorityConfigured: boolean;
+  tlsAuthoritySubject: string | null;
+  tlsAuthorityFingerprint: string | null;
+  tlsAuthorityNotBefore: string | null;
+  tlsAuthorityNotAfter: string | null;
+
+  discoveryEnabled: boolean;
+}
+
+export interface UpdateNetworkSettingsRequest {
+  publicPort: number;
+  tlsEnabled?: boolean;
+  tlsMode?: TlsMode;
+  tlsHttpsPort?: number;
+  discoveryEnabled?: boolean;
+}
+
+export interface UpdateNetworkSettingsResponse extends GetNetworkSettingsResponse {
+  success: boolean;
+  error: string | null;
+}
+
+export interface UpdateNetworkTlsCertificateRequest {
+  certificatePem: string;
+  privateKeyPem: string;
+}
+
+export interface RestartApplicationRequest {
+  reason?: string;
+}
+
+export interface RestartApplicationResponse {
+  success: boolean;
+  supported: boolean;
+  error: string | null;
+}
+
+export interface GetDataDirectoryResponse {
+  path: string;
+  canOpen: boolean;
+}
+
+export interface OpenDataDirectoryResponse {
+  success: boolean;
+  error: string | null;
+}
+
+export type AdbDeviceState =
+  | 'Unknown'
+  | 'Device'
+  | 'Unauthorized'
+  | 'Offline'
+  | 'Authorizing'
+  | 'NoPermissions'
+  | 'Bootloader'
+  | 'Recovery'
+  | 'Sideload'
+  | 'Disconnected';
+
+export interface AdbDevice {
+  serial: string;
+  state: AdbDeviceState;
+  model: string | null;
+  manufacturer: string | null;
+  authorized: boolean;
+  isDefault: boolean;
+  tunnelEstablished: boolean;
+  networkConnection: boolean;
+  tunnelDevicePort: number | null;
+  tunnelError: string | null;
+}
+
+export interface GetAdbSettingsResponse {
+  enabled: boolean;
+  executablePath: string | null;
+  resolvedExecutablePath: string | null;
+  executableSource: string;
+  adbVersion: string | null;
+  serverReachable: boolean;
+  serverStartedByMacroDeck: boolean;
+  usbConnectionsEnabled: boolean;
+  defaultDeviceSerial: string | null;
+  stopServerOnExit: boolean;
+  allowPlugins: boolean;
+  activePublicPort: number;
+  deviceSidePortCandidates: number[];
+  devices: AdbDevice[];
+  lastError: string | null;
+  lastErrorAt: string | null;
+  previousShutdownWasUnclean: boolean;
+  staleTunnelsCleaned: number;
+  supported: boolean;
+  unsupportedReason: string | null;
+}
+
+export interface UpdateAdbSettingsRequest {
+  enabled?: boolean;
+  executablePath?: string;
+  usbConnectionsEnabled?: boolean;
+  defaultDeviceSerial?: string;
+  stopServerOnExit?: boolean;
+  allowPlugins?: boolean;
+}
+
+export interface UpdateAdbSettingsResponse extends GetAdbSettingsResponse {
+  success: boolean;
+  error: string | null;
+}
+
+export interface RestartAdbServerResponse extends GetAdbSettingsResponse {
+  success: boolean;
+  error: string | null;
+}
+
+export interface ConnectAdbDeviceRequest {
+  address: string;
+}
+
+export interface ConnectAdbDeviceResponse extends GetAdbSettingsResponse {
+  success: boolean;
+  error: string | null;
+  errorCode?: string | null;
+}
+
+export interface DownloadAdbPlatformToolsResponse extends GetAdbSettingsResponse {
+  success: boolean;
+  error: string | null;
+}
+
+export interface AdbStateChangedEvent {
+  changedAt: string;
+}
+
+export type NativeUsbPlatform = 'Android' | 'Ios';
+
+export type NativeUsbDeviceState =
+  | 'Available'
+  | 'ServedByAdb'
+  | 'Waiting'
+  | 'WaitingForApp'
+  | 'Linked'
+  | 'Closed'
+  | 'Stopped'
+  | 'NotSupported'
+  | 'Connecting'
+  | 'Switching';
+
+export interface NativeUsbDevice {
+  id: string;
+  platform: NativeUsbPlatform;
+  serial: string | null;
+  manufacturer: string | null;
+  product: string | null;
+  state: NativeUsbDeviceState;
+  picked: boolean;
+  remembered: boolean;
+  canConnect: boolean;
+  knownToAdb: boolean;
+}
+
+export interface NativeUsbRememberedDevice {
+  serial: string;
+  name: string | null;
+}
+
+export interface GetNativeUsbSettingsResponse {
+  enabled: boolean;
+  androidAvailable: boolean;
+  iosAvailable: boolean;
+  bridgeAvailable: boolean;
+  httpsOnly: boolean;
+  devices: NativeUsbDevice[];
+  rememberedDevices: NativeUsbRememberedDevice[];
+}
+
+export interface UpdateNativeUsbSettingsRequest {
+  enabled?: boolean;
+}
+
+export interface UpdateNativeUsbSettingsResponse extends GetNativeUsbSettingsResponse {
+  success: boolean;
+}
+
+export interface ConnectNativeUsbDeviceRequest {
+  id: string;
+}
+
+export interface ConnectNativeUsbDeviceResponse extends GetNativeUsbSettingsResponse {
+  success: boolean;
+  errorCode: string | null;
+}
+
+export interface ForgetNativeUsbDeviceRequest {
+  serial: string;
+}
+
+export interface ForgetNativeUsbDeviceResponse extends GetNativeUsbSettingsResponse {
+  success: boolean;
+}
+
+export interface NativeUsbStateChangedEvent {
+  changedAt: string;
+}
+
+export interface GetDeveloperSettingsResponse {
+  enabled: boolean;
+}
+
+export interface UpdateDeveloperSettingsRequest {
+  enabled?: boolean;
+}
+
+export interface DeveloperSettingsChangedEvent {
+  enabled: boolean;
+}
+
+export interface CompanionLicenseStatus {
+  licensed: boolean;
+  licenseId: string | null;
+  source: string | null;
+  keyId: string | null;
+  issuedAt: number | null;
+  purchasedAt: number | null;
+  billingId: string | null;
+  isTest: boolean;
+  accountSync: CompanionLicenseAccountSync;
+  issuePending: boolean;
+  nextIssueAttemptAt: number | null;
+}
+
+export type CompanionLicenseAccountSync = 'unknown' | 'synced' | 'signedOut';
+
+export interface CompanionLicenseChangedEvent {}
+
+export interface RedeemCompanionPromoCodeRequest {
+  code: string;
+}
+
+export type CompanionPromoCodeStatus =
+  | 'redeemed'
+  | 'accountLicenseExists'
+  | 'alreadyLicensed'
+  | 'invalid'
+  | 'expired'
+  | 'alreadyRedeemed'
+  | 'revoked'
+  | 'accountSuspended'
+  | 'rateLimited'
+  | 'unavailable'
+  | 'signedOut';
+
+export interface RedeemCompanionPromoCodeResponse {
+  status: CompanionPromoCodeStatus;
+  retryAfterSeconds: number | null;
+}
+
+export type CompanionAppDeviceState =
+  | 'NotAuthorized'
+  | 'Checking'
+  | 'NotAndroid'
+  | 'DeviceTooOld'
+  | 'NotInstalled'
+  | 'Installed'
+  | 'UpToDate'
+  | 'UpdateAvailable'
+  | 'InstalledFromPlayStore'
+  | 'Installing'
+  | 'Unknown';
+
+export type CompanionAppError =
+  | 'AdbDisabled'
+  | 'DeviceNotReady'
+  | 'NotAndroid'
+  | 'DeviceTooOld'
+  | 'NoRelease'
+  | 'DownloadFailed'
+  | 'VerificationFailed'
+  | 'IncompatibleSignature'
+  | 'InstallBlockedOnDevice'
+  | 'StorageFull'
+  | 'InstallFailed'
+  | 'PlayStoreInstall';
+
+export interface CompanionAppDevice {
+  serial: string;
+  name: string;
+  state: CompanionAppDeviceState;
+  installedVersion: string | null;
+  installedVersionCode: number | null;
+  error: CompanionAppError | null;
+}
+
+export interface CompanionAppConnectedApp {
+  deviceId: string;
+  name: string;
+  model: string | null;
+  appVersion: string | null;
+  updateAvailable: boolean;
+}
+
+export interface CompanionAppStatus {
+  latestVersion: string | null;
+  latestVersionCode: number | null;
+  publishedAt: number | null;
+  lastCheckedAt: number | null;
+  checking: boolean;
+  checkFailed: boolean;
+  autoUpdate: boolean;
+  allowPlugins?: boolean;
+  adbEnabled: boolean;
+  devices: CompanionAppDevice[];
+  connectedApps: CompanionAppConnectedApp[];
+}
+
+export interface InstallCompanionAppResponse {
+  success: boolean;
+  error: CompanionAppError | null;
+  status: CompanionAppStatus;
+}
+
+export interface CompanionAppChangedEvent {}
+
+/**
+ * The first-launch onboarding wizard (issue #893). Armed by account setup and cleared once the user
+ * skips or finishes it, so the wizard is owed exactly once per installation.
+ */
+export interface GetOnboardingStateRequest {}
+
+export interface GetOnboardingStateResponse {
+  pending: boolean;
+}
+
+export interface CompleteOnboardingRequest {}
+
+export interface CompleteOnboardingResponse {
+  pending: boolean;
+}
+
+export interface UpdateDeveloperSettingsResponse {
+  enabled: boolean;
+}
+
+export interface ExtensionSettingsBody {
+  storeEnabled: boolean;
+  checkForUpdates: boolean;
+  notifyOnUpdates: boolean;
+  refreshIntervalMinutes: number;
+  autoUpdate: boolean;
+  askForRatings: boolean;
+}
+
+export type GetExtensionSettingsResponse = ExtensionSettingsBody;
+
+export type UpdateExtensionSettingsResponse = ExtensionSettingsBody;
+
+export interface UpdateExtensionSettingsRequest {
+  storeEnabled?: boolean;
+  checkForUpdates?: boolean;
+  notifyOnUpdates?: boolean;
+  refreshIntervalMinutes?: number;
+  autoUpdate?: boolean;
+  askForRatings?: boolean;
+}
+
+export interface GetLockScreenSettingsResponse {
+  enabled: boolean;
+}
+
+export interface UpdateLockScreenSettingsRequest {
+  enabled: boolean;
+}
+
+export interface UpdateLockScreenSettingsResponse {
+  enabled: boolean;
+}

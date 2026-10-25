@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">qtitpcdeck</string>
+    <string name="title_activity_main">qtitpcdeck</string>
+    <string name="package_name">com.suchbyte.macrodeck</string>
+    <string name="custom_url_scheme">com.suchbyte.macrodeck</string>
+</resources>

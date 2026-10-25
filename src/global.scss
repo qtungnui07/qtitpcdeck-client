@@ -1,0 +1,42 @@
+/* Core CSS required for Ionic components to work properly */
+@import "@ionic/angular/css/core.css";
+
+/* Basic CSS for apps built with Ionic */
+@import "@ionic/angular/css/normalize.css";
+@import "@ionic/angular/css/structure.css";
+@import "@ionic/angular/css/typography.css";
+@import '@ionic/angular/css/display.css';
+
+/* Optional CSS utils that can be commented out */
+@import "@ionic/angular/css/padding.css";
+@import "@ionic/angular/css/float-elements.css";
+@import "@ionic/angular/css/text-alignment.css";
+@import "@ionic/angular/css/text-transformation.css";
+@import "@ionic/angular/css/flex-utils.css";
+
+/* The Macro Deck 3 runtime's sheets, which paint the widget trees the host pushes. */
+@import "runtime-styles/runtime.css";
+
+.scanner-ui {
+  display: none;
+}
+
+.scanner-hide {
+  visibility: visible;
+}
+
+body.barcode-scanner-active {
+  background-color: transparent;
+}
+
+body.barcode-scanner-active .scanner-ui {
+  display: block;
+}
+
+body.barcode-scanner-active .scanner-hide {
+  visibility: hidden;
+  display: none;
+  --background: transparent;
+  --ion-background-color: transparent;
+  --bs-body-bg: transparent;
+}

@@ -1,0 +1,13 @@
+{
+  // The runtime is copied verbatim from Macro-Deck/ui/runtime/src, which is compiled with its own
+  // tsconfig. It reads index-signature properties with dot access throughout, so the app's
+  // noPropertyAccessFromIndexSignature cannot apply to it without editing the copy.
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noPropertyAccessFromIndexSignature": false
+  },
+  "include": [
+    "src/runtime/**/*.ts"
+  ],
+  "exclude": []
+}

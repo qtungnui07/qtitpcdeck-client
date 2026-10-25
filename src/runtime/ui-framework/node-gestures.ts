@@ -1,0 +1,128 @@
+import { emitsEvent, nodeBoolean, nodeNumber, nodeRecord } from './node-properties.util';
+import { UiNode } from './ui-node.interface';
+import { UiComponentEvents } from '../ui-components/component-events';
+import { UiComponentModifiers } from '../ui-components/component-modifiers';
+import { UiComponents } from '../ui-components/ui-component-types';
+import { UiComponentProperties } from '../ui-components/component-properties';
+import type { UiComponentRegistry } from './component-registry';
+import type { UiComponentBox } from './layout';
+import { tileWalkChildren } from './responsive';
+
+export function nodeClaimsGesture(node: UiNode): boolean {
+  return emitsEvent(node, UiComponentEvents.Press)
+    || emitsEvent(node, UiComponentEvents.LongPress)
+    || emitsEvent(node, UiComponentEvents.PressStart)
+    || emitsEvent(node, UiComponentEvents.PressEnd);
+}
+
+export function nodeClaimsValue(node: UiNode): boolean {
+  return emitsEvent(node, UiComponentEvents.Adjust) || emitsEvent(node, UiComponentEvents.Change);
+}
+
+export function nodeDeclaresPointerFamily(node: UiNode): boolean {
+  return emitsEvent(node, UiComponentEvents.PointerDown)
+    || emitsEvent(node, UiComponentEvents.PointerMove)
+    || emitsEvent(node, UiComponentEvents.PointerUp)
+    || emitsEvent(node, UiComponentEvents.Tap);
+}
+
+export function nodeDeclaresGesture(node: UiNode): boolean {
+  return emitsEvent(node, UiComponentEvents.Drag)
+    || emitsEvent(node, UiComponentEvents.DragEnd)
+    || emitsEvent(node, UiComponentEvents.Swipe)
+    || emitsEvent(node, UiComponentEvents.Pinch)
+    || emitsEvent(node, UiComponentEvents.PinchEnd)
+    || nodeDeclaresPointerFamily(node);
+}
+
+export function ownsItsPointer(node: UiNode): boolean {
+  return nodeClaimsValue(node) || nodeDeclaresGesture(node) || node.type === UiComponents.List;
+}
+
+export function nodeIsDisabledRegion(node: UiNode | null | undefined): boolean {
+  return nodeRecord(node, UiComponentProperties.Modifiers)?.[UiComponentModifiers.Disabled] === true;
+}
+
+export interface UiNodeActivation {
+  name: string;
+  payload: unknown;
+}
+
+export function activationFor(node: UiNode): UiNodeActivation | null {
+  if (!emitsEvent(node, UiComponentEvents.Change)) return null;
+  if (node.type === UiComponents.Toggle) {
+    return { name: UiComponentEvents.Change, payload: nodeBoolean(node, UiComponentProperties.On) !== true };
+  }
+  if (node.type === UiComponents.Segmented) {
+    const count = (node.children ?? []).length;
+    if (count === 0) return null;
+    const selected = nodeNumber(node, UiComponentProperties.Selected);
+    const current = selected !== undefined && selected >= 0 && selected < count ? Math.floor(selected) : -1;
+    return { name: UiComponentEvents.Change, payload: (current + 1) % count };
+  }
+  return null;
+}
+
+export function findInteractiveNode(
+  node: UiNode | null | undefined,
+  tileBox: UiComponentBox | null = null,
+): UiNode | null {
+  if (!node) return null;
+  if (nodeIsDisabledRegion(node) || nodeClaimsGesture(node) || nodeClaimsValue(node) || nodeDeclaresGesture(node)) {
+    return node;
+  }
+  if (node.type === UiComponents.Segmented) return null;
+
+  const children = tileWalkChildren(node, tileBox);
+  for (let index = 0; index < children.length; index++) {
+    const found = findInteractiveNode(children[index].child, children[index].box);
+    if (found !== null) return found;
+  }
+  return null;
+}
+
+export function treeClaimsGesture(node: UiNode | null | undefined, tileBox: UiComponentBox | null = null): boolean {
+  return findInteractiveNode(node, tileBox) !== null;
+}
+
+export type UiActivationClaim = { node: UiNode } | 'absorbed' | 'none';
+
+export function activationClaim(
+  tree: UiNode | null | undefined,
+  tileBox: UiComponentBox | null = null,
+): UiActivationClaim {
+  let absorbed = false;
+
+  function visit(node: UiNode, box: UiComponentBox | null): UiNode | null {
+    if (nodeIsDisabledRegion(node)) {
+      absorbed = true;
+      return null;
+    }
+    if (nodeClaimsGesture(node) || nodeClaimsValue(node)) return node;
+    if (node.type === UiComponents.Segmented) return null;
+
+    const children = tileWalkChildren(node, box);
+    for (let index = 0; index < children.length; index++) {
+      const found = visit(children[index].child, children[index].box);
+      if (found !== null) return found;
+    }
+    return null;
+  }
+
+  const found = tree ? visit(tree, tileBox) : null;
+  if (found !== null) return { node: found };
+  return absorbed ? 'absorbed' : 'none';
+}
+
+export function containsTickingNode(node: UiNode | null | undefined, registry: UiComponentRegistry): boolean {
+  if (!node) return false;
+
+  const definition = registry.get(node.type);
+  if (definition?.tickPeriodMs && definition.tickPeriodMs(node) !== null) return true;
+
+  const children = node.children ?? [];
+  for (let index = 0; index < children.length; index++) {
+    if (containsTickingNode(children[index], registry)) return true;
+  }
+  return false;
+}

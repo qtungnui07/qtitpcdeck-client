@@ -1,0 +1,75 @@
+name: Base Build
+on:
+  workflow_call:
+    outputs:
+      artifact_name:
+        description: "Name of the uploaded artifact"
+        value: ${{ jobs.base-build.outputs.artifact_name }}
+
+jobs:
+  base-build:
+    name: Build project
+    runs-on: ubuntu-latest
+    outputs:
+      artifact_name: ${{ steps.meta.outputs.artifact_name }}
+    steps:
+      - name: "Check out code"
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+      - name: "Setup dependencies: Node"
+        uses: actions/setup-node@v4
+      - name: "Install dependencies"
+        uses: Macro-Deck-App/Actions/setup-ionic@main
+      - name: "Build Ionic app"
+        run: ionic build -c production
+      - name: "Sync iOS project"
+        run: cap sync ios
+      - name: "Sync Android project"
+        run: cap sync android
+      - name: Generate artifact name
+        id: meta
+        run: |
+          ARTIFACT_NAME="base-build-${GITHUB_RUN_ID}"
+          echo "artifact_name=$ARTIFACT_NAME" >> $GITHUB_OUTPUT
+      - name: Upload www artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.meta.outputs.artifact_name }}-www
+          path: www/
+          if-no-files-found: error
+          retention-days: 1
+      - name: Upload node artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.meta.outputs.artifact_name }}-node
+          path: node_modules/
+          if-no-files-found: error
+          retention-days: 1
+      - name: Upload ios artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.meta.outputs.artifact_name }}-ios
+          path: ios/
+          if-no-files-found: error
+          retention-days: 1
+      - name: Upload android artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.meta.outputs.artifact_name }}-android
+          path: android/
+          if-no-files-found: error
+          retention-days: 1
+      - name: "Clean up app build"
+        run: rm -rf www
+      - name: "Build web client"
+        run: |
+          ionic build -c web_production
+          cd www && zip -r web-client.zip .
+      - name: Upload web client artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.meta.outputs.artifact_name }}-web-client
+          path: www/web-client.zip
+          if-no-files-found: error
+          retention-days: 1

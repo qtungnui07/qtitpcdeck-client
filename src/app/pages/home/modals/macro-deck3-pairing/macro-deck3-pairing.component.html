@@ -1,0 +1,29 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Pair with {{ hostName }}</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="cancel()">Cancel</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+<ion-content class="ion-padding">
+  <p>Open Macro Deck 3 on your computer and enter the pairing code it shows.</p>
+
+  <ion-input
+    [(ngModel)]="code"
+    inputmode="numeric"
+    autocomplete="one-time-code"
+    placeholder="Pairing code"
+    label="Pairing code"
+    labelPlacement="stacked"
+    [counter]="false">
+  </ion-input>
+
+  @if (error) {
+    <ion-text color="danger">
+      <p>{{ error }}</p>
+    </ion-text>
+  }
+
+  <ion-button class="mt-3" expand="block" [disabled]="!canConfirm" (click)="confirm()">Connect</ion-button>
+</ion-content>

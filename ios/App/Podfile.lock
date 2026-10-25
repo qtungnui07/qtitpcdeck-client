@@ -1,0 +1,76 @@
+PODS:
+  - Capacitor (7.2.0):
+    - CapacitorCordova
+  - CapacitorApp (7.0.1):
+    - Capacitor
+  - CapacitorCommunityBarcodeScanner (4.0.1):
+    - Capacitor
+  - CapacitorCommunityKeepAwake (7.0.0):
+    - Capacitor
+  - CapacitorCordova (7.2.0)
+  - CapacitorDevice (7.0.1):
+    - Capacitor
+  - CapacitorHaptics (7.0.1):
+    - Capacitor
+  - CapacitorKeyboard (7.0.1):
+    - Capacitor
+  - CapawesomeCapacitorScreenOrientation (7.0.1):
+    - Capacitor
+  - CordovaPlugins (7.2.0):
+    - CapacitorCordova
+  - Sslhandler (0.0.1):
+    - Capacitor
+
+DEPENDENCIES:
+  - "Capacitor (from `../../node_modules/@capacitor/ios`)"
+  - "CapacitorApp (from `../../node_modules/@capacitor/app`)"
+  - "CapacitorCommunityBarcodeScanner (from `../../node_modules/@capacitor-community/barcode-scanner`)"
+  - "CapacitorCommunityKeepAwake (from `../../node_modules/@capacitor-community/keep-awake`)"
+  - "CapacitorCordova (from `../../node_modules/@capacitor/ios`)"
+  - "CapacitorDevice (from `../../node_modules/@capacitor/device`)"
+  - "CapacitorHaptics (from `../../node_modules/@capacitor/haptics`)"
+  - "CapacitorKeyboard (from `../../node_modules/@capacitor/keyboard`)"
+  - "CapawesomeCapacitorScreenOrientation (from `../../node_modules/@capawesome/capacitor-screen-orientation`)"
+  - CordovaPlugins (from `../capacitor-cordova-ios-plugins`)
+  - Sslhandler (from `../../node_modules/sslhandler`)
+
+EXTERNAL SOURCES:
+  Capacitor:
+    :path: "../../node_modules/@capacitor/ios"
+  CapacitorApp:
+    :path: "../../node_modules/@capacitor/app"
+  CapacitorCommunityBarcodeScanner:
+    :path: "../../node_modules/@capacitor-community/barcode-scanner"
+  CapacitorCommunityKeepAwake:
+    :path: "../../node_modules/@capacitor-community/keep-awake"
+  CapacitorCordova:
+    :path: "../../node_modules/@capacitor/ios"
+  CapacitorDevice:
+    :path: "../../node_modules/@capacitor/device"
+  CapacitorHaptics:
+    :path: "../../node_modules/@capacitor/haptics"
+  CapacitorKeyboard:
+    :path: "../../node_modules/@capacitor/keyboard"
+  CapawesomeCapacitorScreenOrientation:
+    :path: "../../node_modules/@capawesome/capacitor-screen-orientation"
+  CordovaPlugins:
+    :path: "../capacitor-cordova-ios-plugins"
+  Sslhandler:
+    :path: "../../node_modules/sslhandler"
+
+SPEC CHECKSUMS:
+  Capacitor: 106e7a4205f4618d582b886a975657c61179138d
+  CapacitorApp: d63334c052278caf5d81585d80b21905c6f93f39
+  CapacitorCommunityBarcodeScanner: 7feb206489c8555a8ca0c74c57ddf49ead774eb8
+  CapacitorCommunityKeepAwake: 00dfd8fa3cca0df003c9a3e2cd7bee678aeec68b
+  CapacitorCordova: 5967b9ba03915ef1d585469d6e31f31dc49be96f
+  CapacitorDevice: fe3f190e1d718f4607bdc6b73993433d1c84f409
+  CapacitorHaptics: 70e47470fa1a6bd6338cd102552e3846b7f9a1b3
+  CapacitorKeyboard: 969647d0ca2e5c737d7300088e2517aa832434e2
+  CapawesomeCapacitorScreenOrientation: f47275aee2356b38d34c1328afc930e787f1caa2
+  CordovaPlugins: ed39794e01c8cf15e7871d8743b51d8e2f47c342
+  Sslhandler: 5b1dfaa41fdbad6e788cea98538cb0c2995b9153
+
+PODFILE CHECKSUM: da7bb84d682684c56c1176daada29c914a7af786
+
+COCOAPODS: 1.15.2
