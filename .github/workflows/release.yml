@@ -1,0 +1,56 @@
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch: {}
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  determine-version:
+    name: Determine version
+    uses: ./.github/workflows/reusable-determine-version.yml
+
+  base-build:
+    name: Base build
+    uses: ./.github/workflows/reusable-base-build.yml
+    permissions:
+      contents: read
+
+  android-build:
+    name: Android build
+    needs: [determine-version, base-build]
+    uses: ./.github/workflows/reusable-android-build.yml
+    with:
+      version: ${{ needs.determine-version.outputs.version }}
+      base-build-artifact-name: ${{ needs.base-build.outputs.artifact_name }}
+    permissions:
+      contents: read
+    secrets: {}
+
+  attach:
+    name: Attach APK to the release
+    needs: [determine-version, android-build]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Download the built APK
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ needs.android-build.outputs.artifact_name }}
+          path: dist/
+      - name: Rename to the branded file name
+        run: |
+          cd dist
+          mv app-debug.apk "qtitpcdeck-client-${{ needs.determine-version.outputs.version }}.apk"
+      - name: Attach to the release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: "qtitpcdeck client ${{ needs.determine-version.outputs.version }}"
+          tag_name: ${{ github.ref_name }}
+          files: dist/qtitpcdeck-client-*.apk
+          make_latest: true
